@@ -19,6 +19,16 @@
           [140.017380, 36.933815]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "セブンイレブン"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.018616, 36.932983]
+      }
     }
   ]
 }

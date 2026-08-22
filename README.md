@@ -47,9 +47,12 @@ npm run preview
 
 ルートデータは `public/data/routes/sample-route.geojson` に配置されています。実際の「あるき道」データが用意できたら、**このファイルを同じ場所・同じファイル名で置き換えるだけ**で反映されます(コード変更は不要です)。
 
-- 形式: `FeatureCollection` の中に `LineString` (または複数の`Feature`)を含むGeoJSON
+- 形式: `FeatureCollection` の中に `LineString` (ルート)や `Point` (地点)を含むGeoJSON
 - 座標系: WGS84(緯度経度、`[経度, 緯度]`の順)
+- `Point` の`Feature`に`properties.name`を設定すると、地点名ラベル付きのマーカーとして地図上に表示されます(GPXのウェイポイントに相当)
 - 初期表示位置・ズームは `src/map/style.ts` の `INITIAL_CENTER` / `INITIAL_ZOOM` で調整してください(実データのルートに合わせて更新することを推奨します)
+
+GPXファイルを直接読み込む機能は持たないため、GPXを用意した場合はGeoJSONへ変換してから配置してください(`<trkpt>` → `LineString`の座標、`<wpt>` → `name`付きの`Point`)。
 
 ## オフライン地図の保存方法
 

@@ -20,6 +20,7 @@ export const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const markerRef = useRef<Marker | null>(null)
+  const waypointMarkersRef = useRef<Marker[]>([])
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
@@ -55,6 +56,40 @@ export const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
         layout: { 'line-join': 'round', 'line-cap': 'round' },
         paint: { 'line-color': '#ff6b35', 'line-width': 4 },
       })
+
+      fetch(ROUTE_URL)
+        .then((res) => res.json())
+        .then((geojson) => {
+          const features = geojson.features ?? []
+          for (const feature of features) {
+            if (feature.geometry?.type !== 'Point') continue
+
+            const [lng, lat] = feature.geometry.coordinates
+            const name: string = feature.properties?.name ?? ''
+
+            const el = document.createElement('div')
+            el.className = 'waypoint-marker'
+
+            if (name) {
+              const label = document.createElement('span')
+              label.className = 'waypoint-label'
+              label.textContent = name
+              el.appendChild(label)
+            }
+
+            const dot = document.createElement('span')
+            dot.className = 'waypoint-dot'
+            el.appendChild(dot)
+
+            const marker = new Marker({ element: el, anchor: 'bottom' })
+              .setLngLat([lng, lat])
+              .addTo(map)
+            waypointMarkersRef.current.push(marker)
+          }
+        })
+        .catch((err) => {
+          console.error('[route] ウェイポイントの読み込みに失敗しました', err)
+        })
     })
 
     mapRef.current = map
@@ -62,6 +97,8 @@ export const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
     return () => {
       markerRef.current?.remove()
       markerRef.current = null
+      waypointMarkersRef.current.forEach((m) => m.remove())
+      waypointMarkersRef.current = []
       map.remove()
       mapRef.current = null
     }
