@@ -1,0 +1,114 @@
+import { useRef, useState } from 'react'
+import { MapView, type MapViewHandle } from './map/MapView'
+import { useGeolocation } from './geolocation/useGeolocation'
+import { useOnlineStatus } from './network/useOnlineStatus'
+import { saveOfflineArea, getOfflineStatus, type OfflineMapStatus } from './offline/tileCache'
+import './App.css'
+
+function formatSavedAt(iso: string): string {
+  return new Date(iso).toLocaleString('ja-JP', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function App() {
+  const mapRef = useRef<MapViewHandle>(null)
+  const { position, error } = useGeolocation()
+  const isOnline = useOnlineStatus()
+
+  const [offlineStatus, setOfflineStatus] = useState<OfflineMapStatus | null>(() =>
+    getOfflineStatus(),
+  )
+  const [saving, setSaving] = useState(false)
+  const [progress, setProgress] = useState<{ completed: number; total: number } | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
+
+  const handleLocateClick = () => {
+    if (position) {
+      mapRef.current?.flyToPosition(position)
+    }
+  }
+
+  const handleSaveOfflineClick = async () => {
+    if (saving) return
+    setSaving(true)
+    setSaveError(null)
+    setProgress({ completed: 0, total: 0 })
+    try {
+      const status = await saveOfflineArea((p) => setProgress(p))
+      setOfflineStatus(status)
+    } catch {
+      setSaveError('オフライン地図の保存に失敗しました。電波の良い場所でもう一度お試しください。')
+    } finally {
+      setSaving(false)
+      setProgress(null)
+    }
+  }
+
+  const savePercent =
+    progress && progress.total > 0 ? Math.round((progress.completed / progress.total) * 100) : 0
+
+  const saveButtonLabel = saving
+    ? `保存中 ${savePercent}%`
+    : offlineStatus
+      ? '地図を更新'
+      : '地図を保存'
+
+  return (
+    <div className="app">
+      <header className="app-header">
+        <h1>日光国立公園あるき道</h1>
+        {!isOnline && <span className="offline-badge">オフライン</span>}
+      </header>
+      <main className="map-wrapper">
+        <MapView ref={mapRef} position={position} />
+
+        <div className="status-overlay">
+          {error ? (
+            <p className="status-error">{error}</p>
+          ) : position ? (
+            <p className="status-ok">
+              現在地取得済み
+              <br />
+              精度 ±{Math.round(position.accuracy)}m
+            </p>
+          ) : (
+            <p className="status-pending">現在地を取得中...</p>
+          )}
+          {offlineStatus && (
+            <p className="status-offline-ready">
+              オフライン利用準備完了
+              <br />
+              {formatSavedAt(offlineStatus.savedAt)}保存(タイル{offlineStatus.tileCount}枚)
+            </p>
+          )}
+          {saveError && <p className="status-error">{saveError}</p>}
+        </div>
+
+        <button
+          type="button"
+          className="locate-button"
+          onClick={handleLocateClick}
+          disabled={!position}
+        >
+          現在地
+        </button>
+
+        <button
+          type="button"
+          className="save-offline-button"
+          onClick={handleSaveOfflineClick}
+          disabled={saving || !isOnline}
+        >
+          {saveButtonLabel}
+        </button>
+      </main>
+    </div>
+  )
+}
+
+export default App
