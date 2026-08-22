@@ -23,9 +23,9 @@ export const mapStyle: StyleSpecification = {
   ],
 }
 
-// 戦場ヶ原自然研究路(サンプルルート)周辺を初期表示地点とする。
-export const INITIAL_CENTER: [number, number] = [139.446, 36.812]
-export const INITIAL_ZOOM = 13
+// テストルート(test.gpx)周辺を初期表示地点とする。
+export const INITIAL_CENTER: [number, number] = [140.0176, 36.9334]
+export const INITIAL_ZOOM = 16
 
 // 差し替え対象。実際のあるき道データが揃ったらこのファイルを置き換えるだけでよい。
 export const ROUTE_URL = `${import.meta.env.BASE_URL}data/routes/sample-route.geojson`

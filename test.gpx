@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="TrailNote" xmlns="http://www.topografix.com/GPX/1/1">
+	<trk>
+		<number>1</number>
+		<trkseg>
+			<trkpt lat="36.933819" lon="140.017365">
+				<ele>280.82</ele>
+			</trkpt>
+			<trkpt lat="36.933998" lon="140.017075">
+				<ele>281.10</ele>
+			</trkpt>
+			<trkpt lat="36.933636" lon="140.016693">
+				<ele>281.25</ele>
+			</trkpt>
+			<trkpt lat="36.932747" lon="140.018036">
+				<ele>279.60</ele>
+			</trkpt>
+			<trkpt lat="36.932587" lon="140.018265">
+				<ele>279.24</ele>
+			</trkpt>
+			<trkpt lat="36.932987" lon="140.018631">
+				<ele>279.03</ele>
+			</trkpt>
+			<trkpt lat="36.933815" lon="140.017380">
+				<ele>280.82</ele>
+			</trkpt>
+		</trkseg>
+	</trk>
+</gpx>
