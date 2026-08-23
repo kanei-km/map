@@ -28,6 +28,7 @@ function App() {
   const {
     isSharing,
     participantId,
+    displayCode,
     authError,
     start: startSharing,
     stop: stopSharing,
@@ -92,6 +93,7 @@ function App() {
             </button>
             <span className="sharing-status">
               {isSharing ? '位置共有: 有効(送信中)' : '位置共有: 停止中'}
+              {displayCode && ` / 参加者番号: ${displayCode}`}
             </span>
           </div>
           {authError && <p className="status-error">{authError}</p>}

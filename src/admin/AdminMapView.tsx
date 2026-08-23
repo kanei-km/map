@@ -56,8 +56,12 @@ export function AdminMapView({ participants }: AdminMapViewProps) {
         marker.setLngLat([participant.longitude, participant.latitude])
       }
 
+      // MapLibreがマーカー要素に付与する内部クラス(位置追随に必要)を消さないよう、
+      // className の丸ごと上書きではなく、自前のクラスだけをclassListで付け替える。
       const el = marker.getElement()
-      el.className = `admin-marker admin-marker-${status}`
+      el.classList.add('admin-marker')
+      el.classList.remove('admin-marker-updating', 'admin-marker-delayed', 'admin-marker-stale')
+      el.classList.add(`admin-marker-${status}`)
       el.replaceChildren()
 
       const label = document.createElement('span')
