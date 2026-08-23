@@ -68,6 +68,28 @@
   padding: 12px 16px;
   background: #1f3d2b;
   color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-reset-button {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #b3261e;
+  color: #fff;
+}
+
+.admin-reset-button:disabled {
+  background: #9aa79e;
+  opacity: 0.8;
 }
 
 .admin-header h1 {

@@ -19,6 +19,7 @@ export function AdminApp() {
   const [loginError, setLoginError] = useState<string | null>(null)
   const [participants, setParticipants] = useState<ParticipantLocation[]>([])
   const [loadError, setLoadError] = useState<string | null>(null)
+  const [resetting, setResetting] = useState(false)
 
   const checkAdmin = useCallback(async () => {
     const { data: sessionData } = await supabase.auth.getSession()
@@ -75,6 +76,24 @@ export function AdminApp() {
     return () => window.clearInterval(intervalId)
   }, [isAdmin, loadData])
 
+  const handleReset = async () => {
+    const confirmed = window.confirm(
+      '現在の参加者一覧をリセットします。全参加者の位置情報履歴が削除され、一覧が空になります(参加者番号の登録自体は維持されます)。よろしいですか？',
+    )
+    if (!confirmed) return
+
+    setResetting(true)
+    setLoadError(null)
+    const { error } = await supabase.from('location_points').delete().not('id', 'is', null)
+    setResetting(false)
+
+    if (error) {
+      setLoadError('リセットに失敗しました。')
+      return
+    }
+    await loadData()
+  }
+
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault()
     setLoginError(null)
@@ -125,6 +144,14 @@ export function AdminApp() {
     <div className="admin-app">
       <header className="admin-header">
         <h1>日光国立公園あるき道 管理画面</h1>
+        <button
+          type="button"
+          className="admin-reset-button"
+          onClick={handleReset}
+          disabled={resetting}
+        >
+          {resetting ? 'リセット中...' : 'セッションをリセット'}
+        </button>
       </header>
       <main className="admin-main">
         <div className="admin-map-wrapper">
