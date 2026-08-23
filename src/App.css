@@ -56,6 +56,35 @@
   pointer-events: none;
 }
 
+.sharing-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.sharing-toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  pointer-events: auto;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  background: #1f3d2b;
+  color: #fff;
+}
+
+.sharing-toggle.sharing-on {
+  background: #b3261e;
+}
+
+.sharing-status {
+  font-size: 13px;
+  color: #555;
+}
+
 .status-overlay p {
   margin: 0;
 }

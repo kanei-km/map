@@ -64,6 +64,41 @@ GPXファイルを直接読み込む機能は持たないため、GPXを用意�
 
 ルートデータを差し替えた場合は、「地図を保存」を再度押して該当エリアのタイルを保存し直してください。
 
+## 位置共有機能(実証版)
+
+利用者が「位置共有を開始」すると、この端末のGPS位置情報を60秒間隔でSupabaseへ送信します。通信できない場合はIndexedDBに一時保存し、オンライン復帰時・アプリ起動時・一定間隔(60秒)・次の位置取得時に自動で再送信します。
+
+- リアルタイム追跡や遭難救助システムではありません。iPhoneでは画面ロック・バックグラウンド化により位置取得が停止します(後述の制約を参照)
+- 位置共有は必ず利用者本人の操作で開始し、開始時に送信内容を明示します
+- 参加者の識別にはSupabaseの匿名認証(Anonymous Auth)を使用し、メールアドレス等の入力は不要です
+
+### Supabaseのセットアップ
+
+1. Supabaseプロジェクトを作成し、`supabase/migrations/` 内のSQLを順に適用する(`npx supabase db query --linked --project-ref <ref> --file supabase/migrations/<file>.sql`)
+2. プロジェクトの匿名認証を有効化する(`supabase/config.toml` の `enable_anonymous_sign_ins = true` を `npx supabase config push` で反映)
+3. `.env.local` に以下を設定する(`.env.example` を参照)
+
+```
+VITE_SUPABASE_URL=https://<project-ref>.supabase.co
+VITE_SUPABASE_ANON_KEY=<publishable/anon key>
+```
+
+4. GitHub Pagesへのデプロイでもこれらの値が必要なため、GitHubリポジトリのSecretsに `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` を登録する(`gh secret set` など)
+
+### データ保持期間
+
+`app_config`テーブルの`location_retention_days`(既定14日)で保持期間を設定できます。`public.cleanup_old_location_points()`関数を実行すると、それより古い位置データを削除します(実証版では手動実行、または任意でpg_cron等によるスケジュール実行を検討してください)。
+
+## 管理画面
+
+運営者が参加者の最終確認位置を確認できる簡易ダッシュボードです。`/admin.html`(例: `https://kanei-km.github.io/map/admin.html`)からアクセスします。
+
+- ログインには、`admins`テーブルに登録されたSupabaseアカウント(メール・パスワード)が必要です。一般の参加者アカウント(匿名認証)ではログインできません
+- 新しい管理者を追加するには、Supabase Auth側にユーザーを作成した上で、`admins`テーブルに `user_id` を1行追加してください
+- 各参加者について「参加者◯◯◯」「最終確認: HH:MM」「GPS精度」に加え、最終確認からの経過時間に応じた状態(更新中/更新遅延/位置情報更新なし)を表示します。**現在位置ではなく「最終確認位置」として扱います**
+- しきい値(既定: 5分/15分)は `src/admin/adminConfig.ts` の `FRESHNESS_THRESHOLD_MINUTES` で変更できます
+- 一覧は30秒ごとに自動更新されます
+
 ## デプロイ方法(GitHub Pages)
 
 本リポジトリは GitHub Pages(`https://kanei-km.github.io/map/`)へのデプロイを前提に構成しています。
@@ -111,3 +146,6 @@ GPSは屋外の上空が開けた場所で確認してください。屋内や�
 - **地図保存範囲**: サンプルルート周辺(z12〜z16、バッファ500m)に限定しています。範囲やズームレベルを広げるとタイル数・保存時間・保存容量が増加します
 - **バンドルサイズ**: MapLibre GL JS等を含むため、本番ビルドのJSバンドルは約1.1MB(gzip後 約310KB)です。実証版のため未対応ですが、本格運用時はコード分割等の最適化を検討してください
 - **GPS精度**: 山間部・樹林帯では衛星捕捉状況により精度や取得時間が変動します
+- **位置共有はフォアグラウンド限定**: 画面ロックやアプリのバックグラウンド化が起きると、iOS Safariでは位置取得が停止します。これはWebアプリの制約であり回避できません。実証実験中は画面を開いたままにしてください
+- **位置データの認可**: 参加者はSupabase匿名認証で識別し、RLS(Row Level Security)により自分の位置データのみ書き込み・閲覧可能です。管理画面は別途登録した管理者アカウントでのみ全参加者を閲覧できます
+- **同時再送信の扱い**: 複数のタイミングで再送信を試みる設計のため、同じ位置データが競合して送信されることがあります。位置データは一度記録したら変更しない前提とし、送信は「重複時は何もしない」方式で安全に重複排除しています

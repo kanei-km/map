@@ -4,6 +4,8 @@ export interface GeolocationPosition {
   latitude: number
   longitude: number
   accuracy: number
+  altitude: number | null
+  timestamp: number
 }
 
 export interface GeolocationState {
@@ -42,6 +44,8 @@ export function useGeolocation(): GeolocationState {
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
           accuracy: pos.coords.accuracy,
+          altitude: pos.coords.altitude,
+          timestamp: pos.timestamp,
         })
       },
       (err) => {

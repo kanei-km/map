@@ -3,6 +3,8 @@ import { MapView, type MapViewHandle } from './map/MapView'
 import { useGeolocation } from './geolocation/useGeolocation'
 import { useOnlineStatus } from './network/useOnlineStatus'
 import { saveOfflineArea, getOfflineStatus, type OfflineMapStatus } from './offline/tileCache'
+import { useLocationSharing } from './sharing/useLocationSharing'
+import { useLocationCapture } from './sharing/useLocationCapture'
 import './App.css'
 
 function formatSavedAt(iso: string): string {
@@ -15,10 +17,22 @@ function formatSavedAt(iso: string): string {
   })
 }
 
+function formatTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+}
+
 function App() {
   const mapRef = useRef<MapViewHandle>(null)
   const { position, error } = useGeolocation()
   const isOnline = useOnlineStatus()
+  const {
+    isSharing,
+    participantId,
+    authError,
+    start: startSharing,
+    stop: stopSharing,
+  } = useLocationSharing()
+  const { pendingCount, lastCapturedAt } = useLocationCapture(isSharing, participantId, position)
 
   const [offlineStatus, setOfflineStatus] = useState<OfflineMapStatus | null>(() =>
     getOfflineStatus(),
@@ -68,6 +82,25 @@ function App() {
         <MapView ref={mapRef} position={position} />
 
         <div className="status-overlay">
+          <div className="sharing-control">
+            <button
+              type="button"
+              className={isSharing ? 'sharing-toggle sharing-on' : 'sharing-toggle'}
+              onClick={isSharing ? stopSharing : startSharing}
+            >
+              {isSharing ? '位置共有を停止' : '位置共有を開始'}
+            </button>
+            <span className="sharing-status">
+              {isSharing ? '位置共有: 有効(送信中)' : '位置共有: 停止中'}
+            </span>
+          </div>
+          {authError && <p className="status-error">{authError}</p>}
+          {pendingCount > 0 && (
+            <p className="status-ok">
+              未送信の位置データ: {pendingCount}件
+              {lastCapturedAt && `(最終記録 ${formatTime(lastCapturedAt)})`}
+            </p>
+          )}
           {error ? (
             <p className="status-error">{error}</p>
           ) : position ? (
