@@ -5,6 +5,7 @@ export interface GeolocationPosition {
   longitude: number
   accuracy: number
   altitude: number | null
+  heading: number | null
   timestamp: number
 }
 
@@ -45,6 +46,7 @@ export function useGeolocation(): GeolocationState {
           longitude: pos.coords.longitude,
           accuracy: pos.coords.accuracy,
           altitude: pos.coords.altitude,
+          heading: Number.isFinite(pos.coords.heading) ? pos.coords.heading : null,
           timestamp: pos.timestamp,
         })
       },

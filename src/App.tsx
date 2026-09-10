@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { MapView, type MapViewHandle } from './map/MapView'
 import { useGeolocation } from './geolocation/useGeolocation'
+import { useDeviceOrientation } from './geolocation/useDeviceOrientation'
 import { useOnlineStatus } from './network/useOnlineStatus'
 import { saveOfflineArea, getOfflineStatus, type OfflineMapStatus } from './offline/tileCache'
 import { useLocationSharing } from './sharing/useLocationSharing'
@@ -55,7 +56,12 @@ function App() {
   const mapRef = useRef<MapViewHandle>(null)
   const titleRef = useFitTitleFontSize<HTMLHeadingElement>()
   const { position, error } = useGeolocation()
+  const { compassHeading, requestPermission: requestCompassPermission } = useDeviceOrientation()
   const isOnline = useOnlineStatus()
+  const heading =
+    typeof position?.heading === 'number' && Number.isFinite(position.heading)
+      ? position.heading
+      : compassHeading
   const {
     isSharing,
     participantId,
@@ -75,6 +81,9 @@ function App() {
   const [saveError, setSaveError] = useState<string | null>(null)
 
   const handleLocateClick = () => {
+    // iOSはコンパスの利用許可をユーザー操作の中でリクエストする必要があるため、
+    // 現在地ボタンのタップに便乗して許可を求める(未対応/許可済みの端末では何もしない)。
+    void requestCompassPermission()
     if (position) {
       mapRef.current?.flyToPosition(position)
     }
@@ -112,7 +121,7 @@ function App() {
         {!isOnline && <span className="offline-badge">オフライン</span>}
       </header>
       <main className="map-wrapper">
-        <MapView ref={mapRef} position={position} />
+        <MapView ref={mapRef} position={position} heading={heading} />
 
         <div className="status-overlay">
           <div className="sharing-control">

@@ -4,14 +4,37 @@
 }
 
 .current-location-marker {
+  position: relative;
   width: 20px;
   height: 20px;
+}
+
+.current-location-dot {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
   background: #1a73e8;
   border: 3px solid #fff;
   box-shadow:
     0 0 0 6px rgba(26, 115, 232, 0.25),
     0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* 向いている方向を示す扇形。border-topで描くと三角形の頂点が下端(bottom)に来るため、
+   その頂点をマーカー中心に合わせ(translateで下端を中心へ)、回転原点も頂点(50% 100%)に
+   揃える。これにより角度0degで扇形が真上(北)を指し、時計回りの回転が方角と一致する。 */
+.current-location-heading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-top: 32px solid rgba(26, 115, 232, 0.35);
+  transform-origin: 50% 100%;
+  transform: translate(-50%, -100%) rotate(0deg);
+  visibility: hidden;
 }
 
 .waypoint-marker {

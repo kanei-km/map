@@ -11,15 +11,17 @@ export interface MapViewHandle {
 
 interface MapViewProps {
   position: GeolocationPosition | null
+  heading: number | null
 }
 
 export const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
-  { position },
+  { position, heading },
   ref,
 ) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const markerRef = useRef<Marker | null>(null)
+  const headingElRef = useRef<HTMLDivElement | null>(null)
   const waypointMarkersRef = useRef<Marker[]>([])
 
   useEffect(() => {
@@ -113,12 +115,34 @@ export const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
     if (!markerRef.current) {
       const el = document.createElement('div')
       el.className = 'current-location-marker'
+
+      const headingEl = document.createElement('div')
+      headingEl.className = 'current-location-heading'
+      el.appendChild(headingEl)
+      headingElRef.current = headingEl
+
+      const dot = document.createElement('div')
+      dot.className = 'current-location-dot'
+      el.appendChild(dot)
+
       markerRef.current = new Marker({ element: el, anchor: 'center' }).setLngLat(lngLat)
       markerRef.current.addTo(map)
     } else {
       markerRef.current.setLngLat(lngLat)
     }
   }, [position])
+
+  useEffect(() => {
+    const headingEl = headingElRef.current
+    if (!headingEl) return
+
+    if (heading === null) {
+      headingEl.style.visibility = 'hidden'
+      return
+    }
+    headingEl.style.visibility = 'visible'
+    headingEl.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`
+  }, [heading])
 
   useImperativeHandle(ref, () => ({
     flyToPosition: (pos) => {
