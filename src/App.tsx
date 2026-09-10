@@ -52,6 +52,9 @@ function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
 }
 
+// 明示的に'false'を設定した場合のみ無効化する(未設定時は既存デプロイと同じ挙動=有効)。
+const locationSharingEnabled = import.meta.env.VITE_ENABLE_LOCATION_SHARING !== 'false'
+
 function App() {
   const mapRef = useRef<MapViewHandle>(null)
   const titleRef = useFitTitleFontSize<HTMLHeadingElement>()
@@ -140,17 +143,21 @@ function App() {
 
         <div className="status-overlay">
           <div className="sharing-control">
-            <button
-              type="button"
-              className={isSharing ? 'sharing-toggle sharing-on' : 'sharing-toggle'}
-              onClick={isSharing ? stopSharing : startSharing}
-            >
-              {isSharing ? '位置共有を停止' : '位置共有を開始'}
-            </button>
-            <span className="sharing-status">
-              {isSharing ? '位置共有: 有効(送信中)' : '位置共有: 停止中'}
-              {displayCode && ` / 参加者番号: ${displayCode}`}
-            </span>
+            {locationSharingEnabled && (
+              <>
+                <button
+                  type="button"
+                  className={isSharing ? 'sharing-toggle sharing-on' : 'sharing-toggle'}
+                  onClick={isSharing ? stopSharing : startSharing}
+                >
+                  {isSharing ? '位置共有を停止' : '位置共有を開始'}
+                </button>
+                <span className="sharing-status">
+                  {isSharing ? '位置共有: 有効(送信中)' : '位置共有: 停止中'}
+                  {displayCode && ` / 参加者番号: ${displayCode}`}
+                </span>
+              </>
+            )}
             <button
               type="button"
               className="panel-toggle"
@@ -163,8 +170,8 @@ function App() {
           </div>
           {!panelCollapsed && (
             <>
-              {authError && <p className="status-error">{authError}</p>}
-              {pendingCount > 0 && (
+              {locationSharingEnabled && authError && <p className="status-error">{authError}</p>}
+              {locationSharingEnabled && pendingCount > 0 && (
                 <p className="status-ok">
                   未送信の位置データ: {pendingCount}件
                   {lastCapturedAt && `(最終記録 ${formatTime(lastCapturedAt)})`}

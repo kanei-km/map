@@ -81,7 +81,10 @@ GPXファイルを直接読み込む機能は持たないため、GPXを用意�
 ```
 VITE_SUPABASE_URL=https://<project-ref>.supabase.co
 VITE_SUPABASE_ANON_KEY=<publishable/anon key>
+VITE_ENABLE_LOCATION_SHARING=true
 ```
+
+`VITE_ENABLE_LOCATION_SHARING` を `false` にすると、位置共有機能を使わないイベント向けに「位置共有を開始」ボタンや関連のステータス表示を非表示にできます(未設定時は`true`扱い)。
 
 4. GitHub Pagesへのデプロイでもこれらの値が必要なため、GitHubリポジトリのSecretsに `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` を登録する(`gh secret set` など)
 

@@ -97,6 +97,7 @@
   width: 32px;
   height: 32px;
   flex: none;
+  margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: center;
