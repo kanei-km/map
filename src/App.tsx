@@ -38,6 +38,7 @@ function App() {
   const [offlineStatus, setOfflineStatus] = useState<OfflineMapStatus | null>(() =>
     getOfflineStatus(),
   )
+  const [panelCollapsed, setPanelCollapsed] = useState(false)
   const [saving, setSaving] = useState(false)
   const [progress, setProgress] = useState<{ completed: number; total: number } | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -76,7 +77,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>日光国立公園あるき道</h1>
+        <h1>ONSEN・ガストロノミーウォーキング in 那須塩原2026</h1>
         {!isOnline && <span className="offline-badge">オフライン</span>}
       </header>
       <main className="map-wrapper">
@@ -95,33 +96,46 @@ function App() {
               {isSharing ? '位置共有: 有効(送信中)' : '位置共有: 停止中'}
               {displayCode && ` / 参加者番号: ${displayCode}`}
             </span>
+            <button
+              type="button"
+              className="panel-toggle"
+              onClick={() => setPanelCollapsed((collapsed) => !collapsed)}
+              aria-expanded={!panelCollapsed}
+              aria-label={panelCollapsed ? '詳細情報を表示' : '詳細情報を折りたたむ'}
+            >
+              {panelCollapsed ? '▼' : '▲'}
+            </button>
           </div>
-          {authError && <p className="status-error">{authError}</p>}
-          {pendingCount > 0 && (
-            <p className="status-ok">
-              未送信の位置データ: {pendingCount}件
-              {lastCapturedAt && `(最終記録 ${formatTime(lastCapturedAt)})`}
-            </p>
+          {!panelCollapsed && (
+            <>
+              {authError && <p className="status-error">{authError}</p>}
+              {pendingCount > 0 && (
+                <p className="status-ok">
+                  未送信の位置データ: {pendingCount}件
+                  {lastCapturedAt && `(最終記録 ${formatTime(lastCapturedAt)})`}
+                </p>
+              )}
+              {error ? (
+                <p className="status-error">{error}</p>
+              ) : position ? (
+                <p className="status-ok">
+                  現在地取得済み
+                  <br />
+                  精度 ±{Math.round(position.accuracy)}m
+                </p>
+              ) : (
+                <p className="status-pending">現在地を取得中...</p>
+              )}
+              {offlineStatus && (
+                <p className="status-offline-ready">
+                  オフライン利用準備完了
+                  <br />
+                  {formatSavedAt(offlineStatus.savedAt)}保存(タイル{offlineStatus.tileCount}枚)
+                </p>
+              )}
+              {saveError && <p className="status-error">{saveError}</p>}
+            </>
           )}
-          {error ? (
-            <p className="status-error">{error}</p>
-          ) : position ? (
-            <p className="status-ok">
-              現在地取得済み
-              <br />
-              精度 ±{Math.round(position.accuracy)}m
-            </p>
-          ) : (
-            <p className="status-pending">現在地を取得中...</p>
-          )}
-          {offlineStatus && (
-            <p className="status-offline-ready">
-              オフライン利用準備完了
-              <br />
-              {formatSavedAt(offlineStatus.savedAt)}保存(タイル{offlineStatus.tileCount}枚)
-            </p>
-          )}
-          {saveError && <p className="status-error">{saveError}</p>}
         </div>
 
         <button
