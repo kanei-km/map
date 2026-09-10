@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { MapView, type MapViewHandle } from './map/MapView'
 import { useGeolocation } from './geolocation/useGeolocation'
 import { useOnlineStatus } from './network/useOnlineStatus'
@@ -6,6 +6,36 @@ import { saveOfflineArea, getOfflineStatus, type OfflineMapStatus } from './offl
 import { useLocationSharing } from './sharing/useLocationSharing'
 import { useLocationCapture } from './sharing/useLocationCapture'
 import './App.css'
+
+const TITLE_MAX_FONT_SIZE = 18
+const TITLE_MIN_FONT_SIZE = 10
+
+// フォントの幅は端末によって差があるため、実際に描画してから
+// 1行に収まるまでフォントサイズを縮めることで、どの端末でも見切れないようにする。
+function useFitTitleFontSize<T extends HTMLElement>() {
+  const ref = useRef<T>(null)
+
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const fit = () => {
+      let fontSize = TITLE_MAX_FONT_SIZE
+      el.style.fontSize = `${fontSize}px`
+      while (el.scrollWidth > el.clientWidth && fontSize > TITLE_MIN_FONT_SIZE) {
+        fontSize -= 0.5
+        el.style.fontSize = `${fontSize}px`
+      }
+    }
+
+    fit()
+    window.addEventListener('resize', fit)
+    document.fonts?.ready.then(fit).catch(() => {})
+    return () => window.removeEventListener('resize', fit)
+  }, [])
+
+  return ref
+}
 
 function formatSavedAt(iso: string): string {
   return new Date(iso).toLocaleString('ja-JP', {
@@ -23,6 +53,7 @@ function formatTime(iso: string): string {
 
 function App() {
   const mapRef = useRef<MapViewHandle>(null)
+  const titleRef = useFitTitleFontSize<HTMLHeadingElement>()
   const { position, error } = useGeolocation()
   const isOnline = useOnlineStatus()
   const {
@@ -77,7 +108,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>ONSEN・ガストロノミーウォーキング in 那須塩原2026</h1>
+        <h1 ref={titleRef}>ONSEN・ガストロノミーウォーキング in 那須塩原2026</h1>
         {!isOnline && <span className="offline-badge">オフライン</span>}
       </header>
       <main className="map-wrapper">
