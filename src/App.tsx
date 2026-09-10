@@ -142,33 +142,32 @@ function App() {
         <MapView ref={mapRef} position={position} heading={heading} />
 
         <div className="status-overlay">
-          <div className="sharing-control">
-            {locationSharingEnabled && (
-              <>
-                <button
-                  type="button"
-                  className={isSharing ? 'sharing-toggle sharing-on' : 'sharing-toggle'}
-                  onClick={isSharing ? stopSharing : startSharing}
-                >
-                  {isSharing ? '位置共有を停止' : '位置共有を開始'}
-                </button>
-                <span className="sharing-status">
-                  {isSharing ? '位置共有: 有効(送信中)' : '位置共有: 停止中'}
-                  {displayCode && ` / 参加者番号: ${displayCode}`}
-                </span>
-              </>
-            )}
-            <button
-              type="button"
-              className="panel-toggle"
-              onClick={() => setPanelCollapsed((collapsed) => !collapsed)}
-              aria-expanded={!panelCollapsed}
-              aria-label={panelCollapsed ? '詳細情報を表示' : '詳細情報を折りたたむ'}
-            >
-              {panelCollapsed ? '▼' : '▲'}
-            </button>
-          </div>
-          {!panelCollapsed && (
+          {locationSharingEnabled && (
+            <div className="sharing-control">
+              <button
+                type="button"
+                className={isSharing ? 'sharing-toggle sharing-on' : 'sharing-toggle'}
+                onClick={isSharing ? stopSharing : startSharing}
+              >
+                {isSharing ? '位置共有を停止' : '位置共有を開始'}
+              </button>
+              <span className="sharing-status">
+                {isSharing ? '位置共有: 有効(送信中)' : '位置共有: 停止中'}
+                {displayCode && ` / 参加者番号: ${displayCode}`}
+              </span>
+              <button
+                type="button"
+                className="panel-toggle"
+                onClick={() => setPanelCollapsed((collapsed) => !collapsed)}
+                aria-expanded={!panelCollapsed}
+                aria-label={panelCollapsed ? '詳細情報を表示' : '詳細情報を折りたたむ'}
+              >
+                {panelCollapsed ? '▼' : '▲'}
+              </button>
+            </div>
+          )}
+          {/* 位置共有が無効な時は折りたたむべき「見出し」自体が無いため、常に表示する */}
+          {(!locationSharingEnabled || !panelCollapsed) && (
             <>
               {locationSharingEnabled && authError && <p className="status-error">{authError}</p>}
               {locationSharingEnabled && pendingCount > 0 && (
