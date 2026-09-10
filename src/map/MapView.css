@@ -20,20 +20,26 @@
     0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-/* 向いている方向を示す扇形。border-topで描くと三角形の頂点が下端(bottom)に来るため、
-   その頂点をマーカー中心に合わせ(translateで下端を中心へ)、回転原点も頂点(50% 100%)に
-   揃える。これにより角度0degで扇形が真上(北)を指し、時計回りの回転が方角と一致する。 */
+/* 向いている方向を示すサーチライト状の扇形。clip-pathで扇形に切り抜いた要素に
+   radial-gradientを重ね、マーカー中心(扇の頂点)ほど濃く外側ほど透明にする。
+   扇の頂点をマーカー中心に合わせ(translateで下端を中心へ)、回転原点も頂点
+   (50% 100%)に揃えることで、角度0degが真上(北)を指し、時計回りの回転が
+   実際の方角と一致する。 */
 .current-location-heading {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 0;
-  height: 0;
-  border-left: 11px solid transparent;
-  border-right: 11px solid transparent;
-  border-top: 32px solid rgba(26, 115, 232, 0.35);
+  width: 100px;
+  height: 60px;
   transform-origin: 50% 100%;
   transform: translate(-50%, -100%) rotate(0deg);
+  clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+  background: radial-gradient(
+    circle at 50% 100%,
+    rgba(26, 115, 232, 0.55) 0%,
+    rgba(26, 115, 232, 0.22) 45%,
+    rgba(26, 115, 232, 0) 100%
+  );
   visibility: hidden;
 }
 

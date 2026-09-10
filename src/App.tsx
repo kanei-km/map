@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { MapView, type MapViewHandle } from './map/MapView'
 import { useGeolocation } from './geolocation/useGeolocation'
 import { useDeviceOrientation } from './geolocation/useDeviceOrientation'
@@ -71,6 +71,17 @@ function App() {
     stop: stopSharing,
   } = useLocationSharing()
   const { pendingCount, lastCapturedAt } = useLocationCapture(isSharing, participantId, position)
+
+  // iOSはコンパスの利用許可をユーザー操作の中でリクエストする必要があるが、
+  // 「現在地」ボタンのタップを待つと一度もタップしないユーザーは永久にコンパスが
+  // 有効化されない。画面のどこか一回の操作で自動的にリクエストする。
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      void requestCompassPermission()
+    }
+    window.addEventListener('pointerdown', handleFirstInteraction, { once: true })
+    return () => window.removeEventListener('pointerdown', handleFirstInteraction)
+  }, [requestCompassPermission])
 
   const [offlineStatus, setOfflineStatus] = useState<OfflineMapStatus | null>(() =>
     getOfflineStatus(),

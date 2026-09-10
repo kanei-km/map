@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export type CompassPermissionState = 'unsupported' | 'prompt' | 'granted' | 'denied'
 
@@ -66,7 +66,7 @@ export function useDeviceOrientation(): DeviceOrientationState {
     return () => window.removeEventListener('deviceorientation', handleOrientation)
   }, [permissionState])
 
-  const requestPermission = async () => {
+  const requestPermission = useCallback(async () => {
     if (requestingRef.current || permissionState === 'granted') return
     if (!needsExplicitPermission()) {
       setPermissionState('granted')
@@ -85,7 +85,7 @@ export function useDeviceOrientation(): DeviceOrientationState {
     } finally {
       requestingRef.current = false
     }
-  }
+  }, [permissionState])
 
   return { compassHeading, permissionState, requestPermission }
 }
