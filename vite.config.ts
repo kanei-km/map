@@ -25,7 +25,7 @@ function copyMaplibreWorkerPlugin(): Plugin {
   }
 }
 
-const base = '/map/'
+const base = '/'
 
 // https://vite.dev/config/
 export default defineConfig({
