@@ -75,12 +75,16 @@ function App() {
   // iOSはコンパスの利用許可をユーザー操作の中でリクエストする必要があるが、
   // 「現在地」ボタンのタップを待つと一度もタップしないユーザーは永久にコンパスが
   // 有効化されない。画面のどこか一回の操作で自動的にリクエストする。
+  // 地図(MapLibre GL)はドラッグ操作のためタップイベントをstopPropagation()するので、
+  // バブリングでは地図タップを拾えない。キャプチャフェーズでリッスンすることで、
+  // 地図側に処理が渡る前に検知する。
   useEffect(() => {
     const handleFirstInteraction = () => {
       void requestCompassPermission()
     }
-    window.addEventListener('pointerdown', handleFirstInteraction, { once: true })
-    return () => window.removeEventListener('pointerdown', handleFirstInteraction)
+    window.addEventListener('pointerdown', handleFirstInteraction, { once: true, capture: true })
+    return () =>
+      window.removeEventListener('pointerdown', handleFirstInteraction, { capture: true })
   }, [requestCompassPermission])
 
   const [offlineStatus, setOfflineStatus] = useState<OfflineMapStatus | null>(() =>
