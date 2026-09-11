@@ -12,10 +12,6 @@
 		<name><![CDATA[第1ガストロポイント]]></name>
 		<ele>274.47</ele>
 	</wpt>
-	<wpt lat="36.926109" lon="140.014893">
-		<name><![CDATA[第2ガストロポイント]]></name>
-		<ele>270.06</ele>
-	</wpt>
 	<wpt lat="36.923153" lon="140.009689">
 		<name><![CDATA[ブリヂストン工場見学]]></name>
 		<ele>270.42</ele>
@@ -56,17 +52,44 @@
 		<name><![CDATA[横断歩道]]></name>
 		<ele>284.76</ele>
 	</wpt>
+	<wpt lat="36.926159" lon="140.014801">
+		<name><![CDATA[第2ガストロポイント]]></name>
+		<ele>270.18</ele>
+	</wpt>
+	<wpt lat="36.930882" lon="140.023590">
+		<name><![CDATA[スタート]]></name>
+		<ele>272.21</ele>
+	</wpt>
+	<wpt lat="36.935402" lon="140.022705">
+		<name><![CDATA[ゴール]]></name>
+		<ele>276.74</ele>
+	</wpt>
 	<trk>
 		<number>1</number>
 		<trkseg>
-			<trkpt lat="36.930744" lon="140.023224">
-				<ele>272.47</ele>
+			<trkpt lat="36.930882" lon="140.023560">
+				<ele>272.29</ele>
 			</trkpt>
-			<trkpt lat="36.931892" lon="140.022537">
-				<ele>274.93</ele>
+			<trkpt lat="36.930809" lon="140.023178">
+				<ele>272.59</ele>
 			</trkpt>
-			<trkpt lat="36.931652" lon="140.021866">
-				<ele>274.97</ele>
+			<trkpt lat="36.931206" lon="140.022964">
+				<ele>273.32</ele>
+			</trkpt>
+			<trkpt lat="36.931400" lon="140.022842">
+				<ele>273.71</ele>
+			</trkpt>
+			<trkpt lat="36.931503" lon="140.022781">
+				<ele>273.87</ele>
+			</trkpt>
+			<trkpt lat="36.931328" lon="140.021927">
+				<ele>274.49</ele>
+			</trkpt>
+			<trkpt lat="36.931431" lon="140.021851">
+				<ele>274.64</ele>
+			</trkpt>
+			<trkpt lat="36.931400" lon="140.021622">
+				<ele>274.79</ele>
 			</trkpt>
 			<trkpt lat="36.931274" lon="140.021515">
 				<ele>274.81</ele>
@@ -89,11 +112,11 @@
 			<trkpt lat="36.926762" lon="140.016495">
 				<ele>271.42</ele>
 			</trkpt>
-			<trkpt lat="36.927170" lon="140.015930">
-				<ele>271.79</ele>
+			<trkpt lat="36.925777" lon="140.015732">
+				<ele>269.88</ele>
 			</trkpt>
-			<trkpt lat="36.926517" lon="140.015289">
-				<ele>271.37</ele>
+			<trkpt lat="36.926136" lon="140.015121">
+				<ele>269.91</ele>
 			</trkpt>
 			<trkpt lat="36.926155" lon="140.014816">
 				<ele>270.18</ele>
