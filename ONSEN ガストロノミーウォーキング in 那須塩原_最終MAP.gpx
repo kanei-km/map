@@ -133,11 +133,20 @@
 			<trkpt lat="36.925167" lon="140.013748">
 				<ele>270.69</ele>
 			</trkpt>
-			<trkpt lat="36.924820" lon="140.012589">
+			<trkpt lat="36.924850" lon="140.012634">
+				<ele>271.75</ele>
+			</trkpt>
+			<trkpt lat="36.925198" lon="140.012192">
+				<ele>272.49</ele>
+			</trkpt>
+			<trkpt lat="36.925152" lon="140.012115">
+				<ele>272.57</ele>
+			</trkpt>
+			<trkpt lat="36.924801" lon="140.012543">
 				<ele>271.84</ele>
 			</trkpt>
-			<trkpt lat="36.923912" lon="140.013092">
-				<ele>270.62</ele>
+			<trkpt lat="36.923882" lon="140.013000">
+				<ele>270.51</ele>
 			</trkpt>
 			<trkpt lat="36.923458" lon="140.012238">
 				<ele>269.51</ele>
@@ -154,8 +163,8 @@
 			<trkpt lat="36.923885" lon="140.012970">
 				<ele>270.51</ele>
 			</trkpt>
-			<trkpt lat="36.924789" lon="140.012512">
-				<ele>271.84</ele>
+			<trkpt lat="36.924778" lon="140.012527">
+				<ele>271.81</ele>
 			</trkpt>
 			<trkpt lat="36.925175" lon="140.012054">
 				<ele>272.73</ele>
